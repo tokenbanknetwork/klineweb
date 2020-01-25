@@ -2,7 +2,7 @@
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 typeof define === 'function' && define.amd ? define(['exports'], factory) :
 (global = global || self, factory(global.klinecharts = {}));
-}(this, function (exports) { 'use strict';
+}(this, (function (exports) { 'use strict';
 
 function _typeof(obj) {
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
@@ -74,13 +74,13 @@ function _objectSpread2(target) {
     var source = arguments[i] != null ? arguments[i] : {};
 
     if (i % 2) {
-      ownKeys(source, true).forEach(function (key) {
+      ownKeys(Object(source), true).forEach(function (key) {
         _defineProperty(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
     } else {
-      ownKeys(source).forEach(function (key) {
+      ownKeys(Object(source)).forEach(function (key) {
         Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
       });
     }
@@ -719,6 +719,17 @@ function () {
           this.minPos += data.length;
         }
       }
+    }
+  }, {
+    key: "updateLastData",
+    value: function updateLastData(data) {
+      if (this.dataList.length === 0) {
+        this.dataList.push(data);
+        this.moveToLast();
+        return;
+      }
+
+      this.dataList[this.dataList.length - 1] = data;
     }
   }, {
     key: "moveToLast",
@@ -7899,6 +7910,13 @@ function () {
       this.calcChartIndicator();
       this.xAxisChart.flush();
     }
+  }, {
+    key: "updateLastData",
+    value: function updateLastData(data) {
+      this.dataProvider.updateLastData(data);
+      this.calcChartIndicator();
+      this.xAxisChart.flush();
+    }
     /**
      * 设置样式
      * @param s
@@ -8248,5 +8266,5 @@ exports.version = version;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));
 //# sourceMappingURL=klinecharts.development.js.map

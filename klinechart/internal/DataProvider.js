@@ -4,7 +4,7 @@ import { MarkerType } from '../internal/constants'
 export const DATA_MARGIN_SPACE_RATE = 0.26
 
 class DataProvider {
-  constructor () {
+  constructor() {
     // 数据源
     this.dataList = []
     // 数据绘制起始位置
@@ -59,11 +59,11 @@ class DataProvider {
     }
   }
 
-  space (width) {
+  space(width) {
     this.dataSpace = width / this.range
   }
 
-  addData (data, pos) {
+  addData(data, pos) {
     if (isObject(data) && !isArray(data)) {
       if (pos >= this.dataList.length) {
         this.dataList.push(data)
@@ -86,7 +86,17 @@ class DataProvider {
     }
   }
 
-  moveToLast () {
+  updateLastData(data) {
+    if (this.dataList.length === 0) {
+      this.dataList.push(data);
+      this.moveToLast();
+      return;
+    }
+
+    this.dataList[this.dataList.length - 1] = data;
+  }
+
+  moveToLast() {
     if (this.dataList.length > this.range) {
       this.minPos = this.dataList.length - this.range
       this.currentTooltipDataPos = this.dataList.length - 1
@@ -95,7 +105,7 @@ class DataProvider {
     }
   }
 
-  calcCurrentTooltipDataPos (offsetLeft, x) {
+  calcCurrentTooltipDataPos(offsetLeft, x) {
     const range = +Math.ceil((x - offsetLeft) / this.dataSpace).toFixed(0)
     this.currentTooltipDataPos = this.minPos + range - 1
     if (this.currentTooltipDataPos > this.dataList.length - 1) {

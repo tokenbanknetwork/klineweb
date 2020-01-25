@@ -19,7 +19,7 @@ import KeyboardEvent from '../internal/event/KeyboardEvent'
 import { IndicatorType, YAxisPosition, YAxisTextPosition, MarkerType, ChartType } from '../internal/constants'
 
 class RootChart {
-  constructor (dom, s = {}) {
+  constructor(dom, s = {}) {
     if (!dom) {
       throw new Error(`Chart version is ${process.env.K_LINE_VERSION}. Root dom is null, can not initialize the chart!!!`)
     }
@@ -49,7 +49,7 @@ class RootChart {
   /**
    * 初始化事件
    */
-  initEvent () {
+  initEvent() {
     const mobile = isMobile(window.navigator.userAgent)
     this.dom.addEventListener('contextmenu', (e) => { e.preventDefault() }, false)
     const loadMore = () => {
@@ -105,7 +105,7 @@ class RootChart {
    * 刷新图
    * @param charts
    */
-  flushCharts (charts = []) {
+  flushCharts(charts = []) {
     for (const chart of charts) {
       chart.flush()
     }
@@ -114,7 +114,7 @@ class RootChart {
   /**
    * 计算图的尺寸
    */
-  calcChartDimensions () {
+  calcChartDimensions() {
     const xAxisHeight = this.calcXAxisHeight()
     const yAxisWidth = this.calcYAxisWidth()
     const domWidth = this.dom.offsetWidth
@@ -161,7 +161,7 @@ class RootChart {
   /**
    * 计算x轴高度
    */
-  calcXAxisHeight () {
+  calcXAxisHeight() {
     const xAxis = this.style.xAxis
     const tickText = xAxis.tick.text
     const tickLine = xAxis.tick.line
@@ -179,7 +179,7 @@ class RootChart {
   /**
    * 计算y轴宽度
    */
-  calcYAxisWidth () {
+  calcYAxisWidth() {
     const yAxis = this.style.yAxis
     const tickText = yAxis.tick.text
     const tickLine = yAxis.tick.line
@@ -207,7 +207,7 @@ class RootChart {
   /**
    * 计算图表指标
    */
-  calcChartIndicator () {
+  calcChartIndicator() {
     if (this.mainChart.indicatorType !== IndicatorType.NO) {
       this.calcIndicator(this.mainChart.indicatorType, this.mainChart)
     }
@@ -224,7 +224,7 @@ class RootChart {
    * @param indicatorType
    * @param chart
    */
-  calcIndicator (indicatorType, chart) {
+  calcIndicator(indicatorType, chart) {
     Promise.resolve().then(() => {
       const calc = calcIndicator[indicatorType]
       if (isFunction(calc)) {
@@ -237,7 +237,7 @@ class RootChart {
   /**
    * 调整尺寸
    */
-  resize () {
+  resize() {
     if (this.domWidth !== this.dom.offsetWidth || this.domHeight !== this.dom.offsetHeight) {
       requestAnimationFrame(() => {
         this.calcChartDimensions()
@@ -251,7 +251,7 @@ class RootChart {
    * @param pos
    * @param noMore
    */
-  addData (data, pos = this.dataProvider.dataList.length, noMore = true) {
+  addData(data, pos = this.dataProvider.dataList.length, noMore = true) {
     if (pos === 0) {
       // 当添加的数据是从0的位置开始时，则判断是在加载更多的数据请求来的，将loading重置为未加载状态
       this.loading = false
@@ -262,11 +262,17 @@ class RootChart {
     this.xAxisChart.flush()
   }
 
+  updateLastData(data) {
+    this.dataProvider.updateLastData(data);
+    this.calcChartIndicator();
+    this.xAxisChart.flush();
+  }
+
   /**
    * 设置样式
    * @param s
    */
-  setStyle (s = {}) {
+  setStyle(s = {}) {
     merge(this.style, s)
     this.calcChartDimensions()
   }
@@ -275,7 +281,7 @@ class RootChart {
    * 设置主图类型
    * @param chartType
    */
-  setMainChartType (chartType) {
+  setMainChartType(chartType) {
     if (this.mainChart.chartType !== chartType) {
       this.mainChart.chartType = chartType
       this.flushCharts([this.mainChart, this.tooltipChart])
@@ -289,7 +295,7 @@ class RootChart {
    * 设置主图指标
    * @param indicatorType
    */
-  setMainIndicatorType (indicatorType) {
+  setMainIndicatorType(indicatorType) {
     if (this.mainChart.indicatorType !== indicatorType) {
       this.mainChart.indicatorType = indicatorType
       this.calcIndicator(indicatorType, this.mainChart)
@@ -300,7 +306,7 @@ class RootChart {
    * 设置副图指标
    * @param indicatorType
    */
-  setSubIndicatorType (indicatorType) {
+  setSubIndicatorType(indicatorType) {
     if (this.subIndicatorChart.indicatorType !== indicatorType) {
       const shouldCalcChartHeight = indicatorType === IndicatorType.NO || this.subIndicatorChart.indicatorType === IndicatorType.NO
       this.subIndicatorChart.indicatorType = indicatorType
@@ -318,11 +324,11 @@ class RootChart {
    * @param indicatorType
    * @param params
    */
-  setIndicatorParams (indicatorType, params) {
+  setIndicatorParams(indicatorType, params) {
     if (!this.indicatorParams.hasOwnProperty(indicatorType) ||
       (indicatorType !== IndicatorType.MA &&
-      indicatorType !== IndicatorType.VOL &&
-      params.length !== this.indicatorParams[indicatorType].length)) {
+        indicatorType !== IndicatorType.VOL &&
+        params.length !== this.indicatorParams[indicatorType].length)) {
       return
     }
     this.indicatorParams[indicatorType] = params
@@ -341,7 +347,7 @@ class RootChart {
    * 获取指标参数
    * @returns {{DMI: number[], OBV: [number], SAR: number[], BIAS: number[], MTM: number[], CCI: [number], RSI: number[], TRIX: number[], CR: number[], EMV: number[], KDJ: number[], VOL: number[], BOLL: [number], MA: number[], MACD: number[], PSY: [number], DMA: number[], WR: number[], VR: number[], BRAR: [number]}}
    */
-  getIndicatorParams (indicatorType) {
+  getIndicatorParams(indicatorType) {
     if (indicatorType) {
       return this.indicatorParams[indicatorType] || []
     }
@@ -352,7 +358,7 @@ class RootChart {
    * 显示成交量图
    * @param isShow
    */
-  showVolChart (isShow) {
+  showVolChart(isShow) {
     const isShowVol = this.volIndicatorChart.indicatorType !== IndicatorType.NO
     if (isShow !== isShowVol) {
       this.volIndicatorChart.indicatorType = isShow ? IndicatorType.VOL : IndicatorType.NO
@@ -367,7 +373,7 @@ class RootChart {
    * 设置默认的range
    * @param range
    */
-  setDefaultRange (range) {
+  setDefaultRange(range) {
     if (isNumber(range) && range >= this.dataProvider.minRange && range <= this.dataProvider.maxRange) {
       this.dataProvider.range = range
       this.dataProvider.space(this.tooltipChart.viewPortHandler.contentRight() - this.tooltipChart.viewPortHandler.contentLeft())
@@ -385,7 +391,7 @@ class RootChart {
    * 设置最小range
    * @param range
    */
-  setMinRange (range) {
+  setMinRange(range) {
     if (isNumber(range) && range <= this.dataProvider.range) {
       this.dataProvider.minRange = range
     }
@@ -395,7 +401,7 @@ class RootChart {
    * 设置最大range
    * @param range
    */
-  setMaxRange (range) {
+  setMaxRange(range) {
     if (isNumber(range) && range >= this.dataProvider.range) {
       this.dataProvider.maxRange = range
     }
@@ -405,7 +411,7 @@ class RootChart {
    * 获取主图指标类型
    * @returns {string}
    */
-  getMainIndicatorType () {
+  getMainIndicatorType() {
     return this.mainChart.indicatorType
   }
 
@@ -413,7 +419,7 @@ class RootChart {
    * 获取附图指标类型
    * @returns {string}
    */
-  getSubIndicatorType () {
+  getSubIndicatorType() {
     return this.subIndicatorChart.indicatorType
   }
 
@@ -421,7 +427,7 @@ class RootChart {
    * 成交量图是否显示
    * @returns {boolean}
    */
-  isShowVolChart () {
+  isShowVolChart() {
     return this.volIndicatorChart.indicatorType !== IndicatorType.NO
   }
 
@@ -429,7 +435,7 @@ class RootChart {
    * 获取数据集合
    * @returns {Array}
    */
-  getDataList () {
+  getDataList() {
     return this.dataProvider.dataList
   }
 
@@ -437,14 +443,14 @@ class RootChart {
    * 获取当前样式
    * @returns {{indicator, yAxis, xAxis, grid, candle, tooltip}}
    */
-  getStyle () {
+  getStyle() {
     return this.style
   }
 
   /**
    * 清空数据
    */
-  clearData () {
+  clearData() {
     this.dataProvider.dataList = []
   }
 
@@ -452,7 +458,7 @@ class RootChart {
    * 绘制标记图形
    * @param markerType
    */
-  drawMarker (markerType) {
+  drawMarker(markerType) {
     // 如果当前是正在绘制其它的线模型，则清除掉当前正在绘制的数据
     const currentMarkerType = this.dataProvider.currentMarkerType
     if (currentMarkerType !== markerType) {
@@ -469,7 +475,7 @@ class RootChart {
   /**
    * 清空所有标记图形
    */
-  clearAllMarker () {
+  clearAllMarker() {
     const markerDatas = this.dataProvider.markerDatas
     Object.keys(markerDatas).forEach(key => {
       this.dataProvider.markerDatas[key] = []
@@ -482,7 +488,7 @@ class RootChart {
    * 加载更多
    * @param cb
    */
-  loadMore (cb) {
+  loadMore(cb) {
     this.loadMoreCallback = cb
   }
 
@@ -491,7 +497,7 @@ class RootChart {
    * @param type
    * @param excludes
    */
-  getConvertPictureUrl (type = 'jpeg', excludes = []) {
+  getConvertPictureUrl(type = 'jpeg', excludes = []) {
     if (type !== 'png' && type !== 'jpeg' && type !== 'bmp') {
       throw new Error('Picture format only supports jpeg, png and bmp!!!')
     }
