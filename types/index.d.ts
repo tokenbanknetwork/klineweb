@@ -42,6 +42,7 @@ export interface Chart {
   resize(): void;
   setStyle(style: any): void;
   addData(data: KLineData[] | KLineData, pos?: number, noMore?: boolean): void;
+  updateLastData(data: KLineData): void;
   setMainIndicatorType(indicatorType: IndicatorType): void;
   setSubIndicatorType(indicatorType: IndicatorType): void;
   setIndicatorParams(indicatorType: IndicatorType, params: number[]): void;
